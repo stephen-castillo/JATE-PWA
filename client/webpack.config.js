@@ -1,13 +1,13 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 const path = require('path');
-const { InjectManifest } = require('workbox-webpack-plugin');
 
 // TODO: Add and configure workbox plugins for a service worker and manifest file.
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-// TODO: Add CSS loaders and babel to webpack.
-const BabelLoader = require('babel-loader');
+const { InjectManifest } = require('workbox-webpack-plugin');
 
+// TODO: Add CSS loaders and babel to webpack.
+//const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+//const BabelLoader = require('babel-loader');
 
 module.exports = () => {
   return {
@@ -23,31 +23,41 @@ module.exports = () => {
     plugins: [
         new HtmlWebpackPlugin({
             template: './src/index.html',
+            title: 'JATE',
+            favicon:'./favicon.ico',
         }),
         new WebpackPwaManifest({
-            name: 'Your App Name',
-            short_name: 'App',
-            description: 'Your App Description',
+            fingerprints: false,
+            name: 'Just Another Text Editor',
+            short_name: 'JATE',
+            description: 'Javascript progress web app text editor',
             background_color: '#ffffff',
-            crossorigin: 'use-credentials', //can be null, use-credentials or anonymous
+            publicPath: './',
+            start_url: './',
+            //crossorigin: 'use-credentials', //can be null, use-credentials or anonymous
             icons: [
                 {
                     src: path.resolve('src/images/logo.png'),
                     sizes: [96, 128, 192, 256, 384, 512], // multiple sizes
+                    destination: path.join('assets', 'icons')
                 },
             ],
         }),
         new InjectManifest({
             swSrc: './src-sw.js',
+            swDest: 'src-sw.js',
         }),
-        new MiniCssExtractPlugin(),
     ],
 
     module: {
       rules: [
         {
             test: /\.css$/,
-            use: [MiniCssExtractPlugin.loader, 'css-loader'],
+            use: ['style-loader', 'css-loader'],
+        },
+        {
+            test: /\.(png|svg|jpg|jpeg|gif)$/i,
+            type: 'asset/resource',
         },
         {
             test: /\.(js|jsx)$/,
